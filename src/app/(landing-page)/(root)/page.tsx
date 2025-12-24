@@ -1,3 +1,9 @@
-export default function Home() {
-  return <h1>Home page</h1>;
+import HeroSection from "./_components/hero-section";
+
+export default function HomePage() {
+  return (
+    <div className="flex flex-col gap-y-12">
+      <HeroSection />
+    </div>
+  );
 }
