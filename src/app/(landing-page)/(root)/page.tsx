@@ -1,5 +1,7 @@
 import HeroSection from "./_components/hero-section";
 import FeaturesSection from "./_components/features-section";
+import CallToActionBanner from "./_components/call-to-action-banner";
+import TestimonialsSection from "./_components/testimonials-section";
 
 export default function HomePage() {
   return (
@@ -7,6 +9,10 @@ export default function HomePage() {
       <HeroSection />
 
       <FeaturesSection />
+
+      <CallToActionBanner />
+
+      <TestimonialsSection />
     </div>
   );
 }
