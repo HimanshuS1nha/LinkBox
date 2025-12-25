@@ -1,15 +1,32 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { FacebookIcon, InstagramIcon, TwitterIcon } from "lucide-react";
+import toast from "react-hot-toast";
 
 import MaxWidthWrapper from "@/components/max-width-wrapper";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import Loading from "./loading";
+
+import { trpc } from "@/trpc/client";
 
 import { navbarLinks } from "@/constants/navbar-links";
 
 const Footer = () => {
+  const [email, setEmail] = useState("");
+
+  const { mutate: handleSubscribeToNewsletter, isPending } =
+    trpc.newsletterSubscribers.addSubscriber.useMutation({
+      onSuccess: (data) => {
+        toast.success(data.message);
+        setEmail("");
+      },
+      onError: (error) => {
+        toast.error(error.message);
+      },
+    });
   return (
     <footer className="bg-green-100 mt-12 py-8">
       <MaxWidthWrapper>
@@ -62,16 +79,24 @@ const Footer = () => {
           <div className="flex flex-col gap-y-5 w-[30%] min-w-75 items-center md:items-start">
             <p className="font-medium text-lg">Subscribe to our newsletter</p>
 
-            <form className="flex gap-x-2 items-center">
+            <form
+              className="flex gap-x-2 items-center"
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleSubscribeToNewsletter({ email });
+              }}
+            >
               <Input
                 placeholder="Enter your email"
                 className="bg-white"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 type="email"
                 name="email"
                 id="email"
               />
-              <Button size={"sm"} type="submit">
-                Submit
+              <Button size={"sm"} type="submit" disabled={isPending}>
+                {isPending ? <Loading className="text-white" /> : "Submit"}
               </Button>
             </form>
           </div>

@@ -1,9 +1,12 @@
 import { createTRPCRouter } from "../init";
 
 import { userQueryRouter } from "./user-query-router";
+import { newsletterSubscribersRouter } from "./newsletter-subscriber-router";
 
 export const appRouter = createTRPCRouter({
   userQuery: userQueryRouter,
+
+  newsletterSubscribers: newsletterSubscribersRouter,
 });
 
 // export type definition of API
