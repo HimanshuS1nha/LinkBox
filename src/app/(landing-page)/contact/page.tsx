@@ -1,6 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import { MailIcon, PhoneIcon, PinIcon } from "lucide-react";
+import toast from "react-hot-toast";
 
 import MaxWidthWrapper from "@/components/max-width-wrapper";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,8 +10,39 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import Loading from "@/components/loading";
+
+import { trpc } from "@/trpc/client";
 
 const ContactPage = () => {
+  const [formDetails, setFormDetails] = useState<{
+    name: string;
+    email: string;
+    subject: string;
+    message: string;
+  }>({
+    name: "",
+    email: "",
+    message: "",
+    subject: "",
+  });
+
+  const updateFormDetails = (
+    key: "name" | "email" | "subject" | "message",
+    value: string
+  ) => {
+    setFormDetails((prev) => ({ ...prev, [key]: value }));
+  };
+
+  const { mutate: handleCreateUserQuery, isPending } =
+    trpc.userQuery.createUserQuery.useMutation({
+      onSuccess: (data) => {
+        toast.success(data.message);
+      },
+      onError: (error) => {
+        toast.error(error.message);
+      },
+    });
   return (
     <MaxWidthWrapper>
       <section className="flex flex-col gap-y-8 mt-6">
@@ -53,12 +86,24 @@ const ContactPage = () => {
             </CardHeader>
 
             <CardContent>
-              <form className="flex flex-col gap-y-6">
+              <form
+                className="flex flex-col gap-y-6"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  handleCreateUserQuery(formDetails);
+                }}
+              >
                 <div className="flex flex-col gap-y-3">
                   <Label htmlFor="name" className="ml-1">
                     Name
                   </Label>
-                  <Input placeholder="Enter your name" id="name" required />
+                  <Input
+                    placeholder="Enter your name"
+                    id="name"
+                    required
+                    value={formDetails.name}
+                    onChange={(e) => updateFormDetails("name", e.target.value)}
+                  />
                 </div>
                 <div className="flex flex-col gap-y-3">
                   <Label htmlFor="email" className="ml-1">
@@ -69,13 +114,23 @@ const ContactPage = () => {
                     id="email"
                     type="email"
                     required
+                    value={formDetails.email}
+                    onChange={(e) => updateFormDetails("email", e.target.value)}
                   />
                 </div>
                 <div className="flex flex-col gap-y-3">
                   <Label htmlFor="subject" className="ml-1">
                     Subject
                   </Label>
-                  <Input placeholder="Enter subject" id="subject" required />
+                  <Input
+                    placeholder="Enter subject"
+                    id="subject"
+                    required
+                    value={formDetails.subject}
+                    onChange={(e) =>
+                      updateFormDetails("subject", e.target.value)
+                    }
+                  />
                 </div>
                 <div className="flex flex-col gap-y-3">
                   <Label htmlFor="subject" className="ml-1">
@@ -89,7 +144,7 @@ const ContactPage = () => {
                 </div>
 
                 <Button size={"lg"} type="submit">
-                  Submit
+                  {isPending ? <Loading className="text-white" /> : "Submit"}
                 </Button>
               </form>
             </CardContent>
