@@ -5,6 +5,7 @@ import { TRPCError } from "@trpc/server";
 
 import { tryCatch } from "@/helpers/try-catch";
 
+import * as LinkDal from "@/dal/link-dal";
 import * as UserDal from "@/dal/user-dal";
 
 import { createTRPCRouter, protectedProcedure } from "../init";
@@ -41,9 +42,9 @@ export const linkRouter = createTRPCRouter({
       })
     )
     .query(async (opts) => {
-      // TODO: Save links as well
       const [dbError] = await tryCatch(
         Promise.all([
+          LinkDal.createOrUpdateLinks(opts.input.links, opts.ctx.user.id),
           UserDal.updateUser(opts.input.userDetails, opts.ctx.user.id),
         ])
       );
