@@ -6,10 +6,10 @@ import { usePathname } from "next/navigation";
 import UserButton from "@/components/user-button";
 import Loading from "@/components/loading";
 
-import { cn } from "@/lib/utils";
 import { authClient } from "@/lib/auth-client";
 
 import { dashboardLinks } from "@/constants/dashboard-links";
+import { cn } from "@/lib/utils";
 
 const DashboardNavbar = () => {
   const pathname = usePathname();
