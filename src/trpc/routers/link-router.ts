@@ -8,7 +8,7 @@ import { tryCatch } from "@/helpers/try-catch";
 import * as LinkDal from "@/dal/link-dal";
 import * as UserDal from "@/dal/user-dal";
 
-import { createTRPCRouter, protectedProcedure } from "../init";
+import { baseProcedure, createTRPCRouter, protectedProcedure } from "../init";
 
 export const linkRouter = createTRPCRouter({
   createOrUpdateLinks: protectedProcedure
@@ -41,7 +41,7 @@ export const linkRouter = createTRPCRouter({
         }),
       })
     )
-    .query(async (opts) => {
+    .mutation(async (opts) => {
       const [dbError] = await tryCatch(
         Promise.all([
           LinkDal.createOrUpdateLinks(opts.input.links, opts.ctx.user.id),
@@ -57,5 +57,24 @@ export const linkRouter = createTRPCRouter({
       }
 
       return { message: "Links added/updated successfully" };
+    }),
+
+  // Will also be called to populate /user/[userId] page. So, it is a baseProcedure
+  getLinksByUserId: baseProcedure
+    .input(
+      z.object({
+        userId: z.string({ error: "User is required" }),
+      })
+    )
+    .query(async (opts) => {
+      const [selectError, links] = await tryCatch(
+        LinkDal.getLinksByUserId(opts.input.userId)
+      );
+      if (selectError) {
+        console.error(selectError);
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+      }
+
+      return { links };
     }),
 });
