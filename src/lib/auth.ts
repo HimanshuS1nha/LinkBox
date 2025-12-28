@@ -10,4 +10,19 @@ export const auth = betterAuth({
     provider: "mysql",
     schema,
   }),
+  socialProviders: {
+    google: {
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    },
+  },
+  user: {
+    additionalFields: {
+      description: {
+        type: "string",
+        required: false,
+        fieldName: "description",
+      },
+    },
+  },
 });
