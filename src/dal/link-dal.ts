@@ -68,3 +68,25 @@ export const createOrUpdateLinks = async (
     )
   );
 };
+
+export const getLinksByUserId = async (userId: string) => {
+  const links = await db
+    .select()
+    .from(linkTable)
+    .where(eq(linkTable.userId, userId))
+    .orderBy(linkTable.order);
+
+  return links;
+};
+
+export const getLinkByUserIdAndLinkId = async (
+  userId: string,
+  linkId: string
+) => {
+  const link = await db
+    .select()
+    .from(linkTable)
+    .where(and(eq(linkTable.userId, userId), eq(linkTable.id, linkId)));
+
+  return link.length > 0 ? link[0] : null;
+};
