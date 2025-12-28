@@ -50,7 +50,7 @@ const UserButton = ({
           <Link href={"/pricing"}>Upgrade Plan</Link>
         </DropdownMenuItem>
         <DropdownMenuItem
-          className="focus-visible:bg-destructive focus-visible:text-white cursor-pointer delay-100 transition-all"
+          className="focus:bg-destructive focus:text-white cursor-pointer delay-100 transition-all"
           onClick={() => {
             authClient.signOut();
             router.push("/login");
