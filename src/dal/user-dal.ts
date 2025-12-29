@@ -27,3 +27,18 @@ export const updateUser = async (
     .set({ description, name, image })
     .where(eq(userTable.id, userId));
 };
+
+export const getUser = async (userId: string) => {
+  const user = await db
+    .select({
+      name: userTable.name,
+      id: userTable.id,
+      image: userTable.image,
+      description: userTable.description,
+    })
+    .from(userTable)
+    .where(eq(userTable.id, userId))
+    .limit(1);
+
+  return user.length > 0 ? user[0] : null;
+};
