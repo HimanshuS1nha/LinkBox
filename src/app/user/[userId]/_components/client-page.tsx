@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import Link from "next/link";
 
 import { Card, CardContent } from "@/components/ui/card";
@@ -22,6 +23,21 @@ const UserLinksPageClient = ({
   const [{ links }] = trpc.link.getLinksByUserId.useSuspenseQuery({
     userId: user.id,
   });
+
+  // To prevent useEffect running twice in dev from inflating the analytics
+  const visitRecorded = useRef<boolean>(false);
+
+  const { mutate: handleRecordVisit } =
+    trpc.analytics.recordVisit.useMutation();
+
+  useEffect(() => {
+    if (visitRecorded.current) {
+      return;
+    }
+
+    visitRecorded.current = true;
+    handleRecordVisit({ userId: user.id });
+  }, []);
   return (
     <main className="flex flex-col w-full h-dvh items-center justify-center gap-y-6">
       <Card className="w-[90%] sm:w-[80%] md:w-[60%] lg:w-[40%] xl:w-[25%]">
