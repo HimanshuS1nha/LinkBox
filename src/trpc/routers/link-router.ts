@@ -77,4 +77,26 @@ export const linkRouter = createTRPCRouter({
 
       return { links };
     }),
+
+  getLinkByUserIdAndLinkId: protectedProcedure
+    .input(
+      z.object({
+        linkId: z.string({ error: "User is required" }),
+      })
+    )
+    .query(async (opts) => {
+      const [selectError, link] = await tryCatch(
+        LinkDal.getLinkByUserIdAndLinkId(opts.ctx.user.id, opts.input.linkId)
+      );
+      if (selectError) {
+        console.error(selectError);
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+      }
+
+      if (!link) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Link not found" });
+      }
+
+      return { link };
+    }),
 });
