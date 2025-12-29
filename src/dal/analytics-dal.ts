@@ -70,6 +70,30 @@ export const getAnalyticsForMonthForProfile = async (userId: string) => {
       };
 };
 
+export const getAnalyticsForMonthForLink = async (linkId: string) => {
+  const date = new Date();
+  date.setDate(date.getDate() - 30);
+
+  const data = await db
+    .select({
+      numberOfVisits: count(),
+      numberOfCountries: countDistinct(analyticsTable.country),
+      lastActivity: max(analyticsTable.createdAt),
+    })
+    .from(analyticsTable)
+    .where(
+      and(gt(analyticsTable.createdAt, date), eq(analyticsTable.linkId, linkId))
+    );
+
+  return data.length > 0
+    ? data[0]
+    : {
+        numberOfVisits: 0,
+        numberOfCountries: 0,
+        lastActivity: null,
+      };
+};
+
 export const getCountryWiseVisitsForMonthForProfile = async (
   userId: string
 ) => {
@@ -84,6 +108,27 @@ export const getCountryWiseVisitsForMonthForProfile = async (
     .from(analyticsTable)
     .where(
       and(gt(analyticsTable.createdAt, date), eq(analyticsTable.userId, userId))
+    )
+    .groupBy(analyticsTable.country);
+
+  return {
+    countriesData: data,
+    totalVisitsByCountry: data.reduce((acc, item) => acc + item.count, 0),
+  };
+};
+
+export const getCountryWiseVisitsForMonthForLink = async (linkId: string) => {
+  const date = new Date();
+  date.setDate(date.getDate() - 30);
+
+  const data = await db
+    .selectDistinct({
+      name: analyticsTable.country,
+      count: count(),
+    })
+    .from(analyticsTable)
+    .where(
+      and(gt(analyticsTable.createdAt, date), eq(analyticsTable.linkId, linkId))
     )
     .groupBy(analyticsTable.country);
 
@@ -116,6 +161,26 @@ export const getBrowserWiseVisitsForMonthForProfile = async (
   };
 };
 
+export const getBrowserWiseVisitsForMonthForLink = async (linkId: string) => {
+  const date = new Date();
+  date.setDate(date.getDate() - 30);
+
+  const data = await db
+    .selectDistinct({
+      name: analyticsTable.browser,
+      count: count(),
+    })
+    .from(analyticsTable)
+    .where(
+      and(gt(analyticsTable.createdAt, date), eq(analyticsTable.linkId, linkId))
+    )
+    .groupBy(analyticsTable.browser);
+
+  return {
+    browsersData: data,
+    totalVisitsByBrowser: data.reduce((acc, item) => acc + item.count, 0),
+  };
+};
 
 export const getOsWiseVisitsForMonthForProfile = async (userId: string) => {
   const date = new Date();
@@ -129,6 +194,27 @@ export const getOsWiseVisitsForMonthForProfile = async (userId: string) => {
     .from(analyticsTable)
     .where(
       and(gt(analyticsTable.createdAt, date), eq(analyticsTable.userId, userId))
+    )
+    .groupBy(analyticsTable.os);
+
+  return {
+    osData: data,
+    totalVisitsByOs: data.reduce((acc, item) => acc + item.count, 0),
+  };
+};
+
+export const getOsWiseVisitsForMonthForLink = async (linkId: string) => {
+  const date = new Date();
+  date.setDate(date.getDate() - 30);
+
+  const data = await db
+    .selectDistinct({
+      name: analyticsTable.os,
+      count: count(),
+    })
+    .from(analyticsTable)
+    .where(
+      and(gt(analyticsTable.createdAt, date), eq(analyticsTable.linkId, linkId))
     )
     .groupBy(analyticsTable.os);
 
