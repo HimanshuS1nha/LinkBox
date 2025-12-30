@@ -3,13 +3,14 @@ import "server-only";
 import { headers } from "next/headers";
 import { userAgent } from "next/server";
 import z from "zod";
+import { TRPCError } from "@trpc/server";
 
 import { tryCatch } from "@/helpers/try-catch";
 import { getCountry } from "@/helpers/get-country";
 
 import * as AnalyticsDal from "@/dal/analytics-dal";
 
-import { createTRPCRouter, baseProcedure } from "../init";
+import { createTRPCRouter, baseProcedure, protectedProcedure } from "../init";
 
 export const analyticsRouter = createTRPCRouter({
   recordVisit: baseProcedure
@@ -71,4 +72,24 @@ export const analyticsRouter = createTRPCRouter({
 
       return { message: "Click recorded" };
     }),
+  getAnalyticsForMonthForUser: protectedProcedure.query(async (opts) => {
+    const [error, data] = await tryCatch(
+      Promise.all([
+        AnalyticsDal.getAnalyticsForMonthForProfile(opts.ctx.user.id),
+        AnalyticsDal.getCountryWiseVisitsForMonthForProfile(opts.ctx.user.id),
+        AnalyticsDal.getBrowserWiseVisitsForMonthForProfile(opts.ctx.user.id),
+        AnalyticsDal.getOsWiseVisitsForMonthForProfile(opts.ctx.user.id),
+        AnalyticsDal.getLinkWiseDataForMonthForProfile(opts.ctx.user.id),
+      ])
+    );
+    if (error) {
+      console.error(error);
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Error occurred while fetching your analytics",
+      });
+    }
+
+    return data;
+  }),
 });
