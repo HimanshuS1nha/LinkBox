@@ -9,6 +9,7 @@ import { tryCatch } from "@/helpers/try-catch";
 import { getCountry } from "@/helpers/get-country";
 
 import * as AnalyticsDal from "@/dal/analytics-dal";
+import * as LinkDal from "@/dal/link-dal";
 
 import { createTRPCRouter, baseProcedure, protectedProcedure } from "../init";
 
@@ -92,4 +93,41 @@ export const analyticsRouter = createTRPCRouter({
 
     return data;
   }),
+  getAnalyticsForMonthForLink: protectedProcedure
+    .input(
+      z.object({
+        linkId: z.string({ error: "Link is required" }),
+      })
+    )
+    .query(async (opts) => {
+      // Checking that the link belongs to the user
+      const [selectError, link] = await tryCatch(
+        LinkDal.getLinkByUserIdAndLinkId(opts.ctx.user.id, opts.input.linkId)
+      );
+      if (selectError) {
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+      }
+
+      if (!link) {
+        throw new TRPCError({ code: "NOT_FOUND" });
+      }
+
+      const [error, data] = await tryCatch(
+        Promise.all([
+          AnalyticsDal.getAnalyticsForMonthForLink(opts.input.linkId),
+          AnalyticsDal.getCountryWiseVisitsForMonthForLink(opts.input.linkId),
+          AnalyticsDal.getBrowserWiseVisitsForMonthForLink(opts.input.linkId),
+          AnalyticsDal.getOsWiseVisitsForMonthForLink(opts.ctx.user.id),
+        ])
+      );
+      if (error) {
+        console.error(error);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Error occurred while fetching your analytics",
+        });
+      }
+
+      return data;
+    }),
 });
