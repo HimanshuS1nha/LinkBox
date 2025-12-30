@@ -20,7 +20,7 @@ export const analyticsRouter = createTRPCRouter({
     )
     .mutation(async (opts) => {
       const reqHeaders = await headers();
-      
+
       const { browser, os } = userAgent({ headers: reqHeaders });
 
       const country = await getCountry(reqHeaders);
@@ -41,5 +41,34 @@ export const analyticsRouter = createTRPCRouter({
       }
 
       return { message: "Visit recorded" };
+    }),
+  recordClick: baseProcedure
+    .input(
+      z.object({
+        linkId: z.string({ error: "Link ID is required" }),
+      })
+    )
+    .mutation(async (opts) => {
+      const reqHeaders = await headers();
+      const { browser, os } = userAgent({ headers: reqHeaders });
+
+      const country = await getCountry(reqHeaders);
+
+      const [createError] = await tryCatch(
+        AnalyticsDal.recordClick(
+          {
+            browser: browser.name ?? "Unknown",
+            os: os.name ?? "Unknown",
+            country,
+          },
+          opts.input.linkId
+        )
+      );
+      if (createError) {
+        console.error(createError);
+        // No need to show any errors to the user
+      }
+
+      return { message: "Click recorded" };
     }),
 });
