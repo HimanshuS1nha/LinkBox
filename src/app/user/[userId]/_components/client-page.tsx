@@ -89,7 +89,7 @@ const UserLinksPageClient = ({
       <div className="flex gap-x-2 items-center flex-wrap justify-center">
         The only link you will ever need.
         <Button variant={"link"} className="w-fit p-0 m-0 text-base" asChild>
-          <Link href={"/"}>Try LinkTree now</Link>
+          <Link href={"/"}>Try LinkBox now</Link>
         </Button>
       </div>
     </main>

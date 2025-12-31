@@ -117,7 +117,7 @@ export const analyticsRouter = createTRPCRouter({
           AnalyticsDal.getAnalyticsForMonthForLink(opts.input.linkId),
           AnalyticsDal.getCountryWiseVisitsForMonthForLink(opts.input.linkId),
           AnalyticsDal.getBrowserWiseVisitsForMonthForLink(opts.input.linkId),
-          AnalyticsDal.getOsWiseVisitsForMonthForLink(opts.ctx.user.id),
+          AnalyticsDal.getOsWiseVisitsForMonthForLink(opts.input.linkId),
         ])
       );
       if (error) {

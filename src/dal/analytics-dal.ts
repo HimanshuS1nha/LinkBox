@@ -231,7 +231,10 @@ export const getLinkWiseDataForMonthForProfile = async (userId: string) => {
       clicks: count(sql`${analyticsTable.type} = 'click'`),
     })
     .from(analyticsTable)
-    .innerJoin(linkTable, eq(analyticsTable.linkId, linkTable.id))
+    .innerJoin(
+      linkTable,
+      and(eq(analyticsTable.linkId, linkTable.id), eq(linkTable.userId, userId))
+    )
     .groupBy(linkTable.title);
 
   return { linkWiseData: data };
