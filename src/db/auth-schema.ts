@@ -5,6 +5,7 @@ import {
   text,
   timestamp,
   boolean,
+  int,
   index,
 } from "drizzle-orm/mysql-core";
 
@@ -19,6 +20,7 @@ export const user = mysqlTable("user", {
     .defaultNow()
     .$onUpdate(() => /* @__PURE__ */ new Date())
     .notNull(),
+  stripeCustomerId: text("stripe_customer_id"),
   description: text("description"),
 });
 
@@ -38,7 +40,7 @@ export const session = mysqlTable(
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
   },
-  (table) => [index("session_userId_idx").on(table.userId)]
+  (table) => [index("session_userId_idx").on(table.userId)],
 );
 
 export const account = mysqlTable(
@@ -62,7 +64,7 @@ export const account = mysqlTable(
       .$onUpdate(() => /* @__PURE__ */ new Date())
       .notNull(),
   },
-  (table) => [index("account_userId_idx").on(table.userId)]
+  (table) => [index("account_userId_idx").on(table.userId)],
 );
 
 export const verification = mysqlTable(
@@ -78,8 +80,26 @@ export const verification = mysqlTable(
       .$onUpdate(() => /* @__PURE__ */ new Date())
       .notNull(),
   },
-  (table) => [index("verification_identifier_idx").on(table.identifier)]
+  (table) => [index("verification_identifier_idx").on(table.identifier)],
 );
+
+export const subscription = mysqlTable("subscription", {
+  id: varchar("id", { length: 36 }).primaryKey(),
+  plan: text("plan").notNull(),
+  referenceId: text("reference_id").notNull(),
+  stripeCustomerId: text("stripe_customer_id"),
+  stripeSubscriptionId: text("stripe_subscription_id"),
+  status: text("status").default("incomplete"),
+  periodStart: timestamp("period_start", { fsp: 3 }),
+  periodEnd: timestamp("period_end", { fsp: 3 }),
+  trialStart: timestamp("trial_start", { fsp: 3 }),
+  trialEnd: timestamp("trial_end", { fsp: 3 }),
+  cancelAtPeriodEnd: boolean("cancel_at_period_end").default(false),
+  cancelAt: timestamp("cancel_at", { fsp: 3 }),
+  canceledAt: timestamp("canceled_at", { fsp: 3 }),
+  endedAt: timestamp("ended_at", { fsp: 3 }),
+  seats: int("seats"),
+});
 
 export const userRelations = relations(user, ({ many }) => ({
   sessions: many(session),
