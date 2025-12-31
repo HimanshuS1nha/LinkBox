@@ -2,10 +2,15 @@ import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import Stripe from "stripe";
 import { stripe } from "@better-auth/stripe";
+import { customSession } from "better-auth/plugins";
 
 import { db } from "@/lib/db";
 
 import * as schema from "@/db/schema";
+
+import { tryCatch } from "@/helpers/try-catch";
+
+import * as SubscriptionDal from "@/dal/subscription-dal";
 
 const stripeClient = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2025-12-15.clover", // Latest API version as of Stripe SDK v20.0.0
@@ -55,6 +60,22 @@ export const auth = betterAuth({
           },
         ],
       },
+    }),
+    customSession(async ({ user, session }) => {
+      const [selectError, planName] = await tryCatch(
+        SubscriptionDal.getCurrentlyActiveSubscriptionForUser(user.id)
+      );
+      if (selectError) {
+        console.error(selectError);
+      }
+
+      return {
+        session,
+        user: {
+          ...user,
+          planName,
+        },
+      };
     }),
   ],
 });
