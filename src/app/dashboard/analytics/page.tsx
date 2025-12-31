@@ -6,6 +6,7 @@ import { ErrorBoundary } from "react-error-boundary";
 import AnalyticsPageClient from "./_components/client-page";
 import Fallback from "./_components/fallback";
 import ErrorFallback from "@/components/error-fallback";
+import UpgradePlan from "./_components/upgrade-plan";
 
 import { auth } from "@/lib/auth";
 
@@ -18,6 +19,10 @@ const AnalyticsPage = async () => {
 
   if (!session || !session.user) {
     redirect("/login");
+  }
+
+  if (!session.user.planName) {
+    return <UpgradePlan />;
   }
 
   void trpc.analytics.getAnalyticsForMonthForUser.prefetch();

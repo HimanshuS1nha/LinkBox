@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import LinkAnalyticsPageClient from "./_components/client-page";
 import Fallback from "./_components/fallback";
 import ErrorFallback from "@/components/error-fallback";
+import UpgradePlan from "../_components/upgrade-plan";
 
 import { auth } from "@/lib/auth";
 
@@ -22,6 +23,10 @@ const LinkAnalyticsPage = async ({
 
   if (!session || !session.user) {
     redirect("/login");
+  }
+
+  if (!session.user.planName) {
+    return <UpgradePlan />;
   }
 
   const { linkId } = await params;
