@@ -7,9 +7,9 @@ import UserButton from "@/components/user-button";
 import Loading from "@/components/loading";
 
 import { authClient } from "@/lib/auth-client";
+import { cn } from "@/lib/utils";
 
 import { dashboardLinks } from "@/constants/dashboard-links";
-import { cn } from "@/lib/utils";
 
 const DashboardNavbar = () => {
   const pathname = usePathname();

@@ -48,6 +48,7 @@ const UserButton = ({
             </DropdownMenuItem>
           </>
         )}
+        {/* If user.planName exists, that means he is not on Free tier */}
         {user?.planName && (
           <DropdownMenuItem
             className="cursor-pointer"
