@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import toast from "react-hot-toast";
 import { usePathname, useRouter } from "next/navigation";
 
 import {
@@ -12,13 +13,14 @@ import {
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 
 import { authClient } from "@/lib/auth-client";
 
 const UserButton = ({
   user,
 }: {
-  user?: { name: string; image?: string | null };
+  user?: { name: string; image?: string | null; planName?: string };
 }) => {
   const pathname = usePathname();
 
@@ -33,7 +35,7 @@ const UserButton = ({
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuLabel>
-          My Account
+          My Account <Badge>{user?.planName ?? "Free"}</Badge>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         {!pathname.includes("dashboard") && (
@@ -45,6 +47,23 @@ const UserButton = ({
               <Link href={"/dashboard/analytics"}>My Analytics</Link>
             </DropdownMenuItem>
           </>
+        )}
+        {user?.planName && (
+          <DropdownMenuItem
+            className="cursor-pointer"
+            onClick={async () => {
+              const { data, error } =
+                await authClient.subscription.billingPortal();
+              if (error || !data || !data.url) {
+                toast.error("Some error occurred");
+                return;
+              }
+
+              router.push(data.url);
+            }}
+          >
+            Manage Subscription
+          </DropdownMenuItem>
         )}
         <DropdownMenuItem asChild className="cursor-pointer">
           <Link href={"/pricing"}>Upgrade Plan</Link>
