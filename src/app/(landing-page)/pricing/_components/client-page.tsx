@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/card";
 
 import { cn } from "@/lib/utils";
+import { authClient } from "@/lib/auth-client";
 
 import { pricingPlans } from "@/constants/pricing-plans";
 
@@ -23,6 +24,18 @@ const PricingPageClient = ({
   user?: { id: string; name: string; planName?: string | null };
 }) => {
   const router = useRouter();
+
+  const handleSubscribe = async (planName: "basic" | "pro") => {
+    if (user) {
+      await authClient.subscription.upgrade({
+        plan: planName,
+        successUrl: "/",
+        cancelUrl: "/",
+      });
+    } else {
+      router.push(`/login?redirect_to=pricing`);
+    }
+  };
   return (
     <MaxWidthWrapper>
       <section className="flex flex-col gap-y-8 mt-6">
@@ -69,6 +82,24 @@ const PricingPageClient = ({
                   <Button
                     variant={plan.highlighted ? "default" : "outline"}
                     size={"lg"}
+                    onClick={() => {
+                      if (plan.name !== "Free") {
+                        handleSubscribe(
+                          plan.name.toLowerCase() as "basic" | "pro"
+                        );
+                      } else {
+                        if (user) {
+                          router.push("/dashboard");
+                        } else {
+                          router.push("/login");
+                        }
+                      }
+                    }}
+                    disabled={
+                      plan.name === "Free"
+                        ? !!user
+                        : user?.planName === plan.name
+                    }
                   >
                     {plan.buttonText}
                   </Button>
