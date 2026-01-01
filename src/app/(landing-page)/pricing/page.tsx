@@ -1,81 +1,28 @@
-"use client";
+import { Suspense } from "react";
+import { headers } from "next/headers";
+import { ErrorBoundary } from "react-error-boundary";
 
-import { CheckIcon } from "lucide-react";
-import { useRouter } from "next/navigation";
+import ErrorFallback from "@/components/error-fallback";
+import PricingPageClient from "./_components/client-page";
+import Loading from "@/components/loading";
 
-import MaxWidthWrapper from "@/components/max-width-wrapper";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { auth } from "@/lib/auth";
 
-import { cn } from "@/lib/utils";
+const PricingPage = async () => {
+  const session = await auth.api.getSession({ headers: await headers() });
 
-import { pricingPlans } from "@/constants/pricing-plans";
-
-const PricingPage = () => {
-  const router = useRouter();
   return (
-    <MaxWidthWrapper>
-      <section className="flex flex-col gap-y-8 mt-6">
-        <div className="flex flex-col items-center gap-y-2">
-          <h2 className="text-3xl font-medium text-primary">Pricing</h2>
-          <p className="text-gray-700 text-center md:text-left">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Adipisci,
-            deserunt.
-          </p>
-        </div>
-
-        <div className="flex justify-center lg:justify-between flex-wrap items-center gap-5 lg:gap-0">
-          {pricingPlans.map((plan) => {
-            return (
-              <Card
-                key={plan.name}
-                className={cn(
-                  "w-[32%] flex flex-col items-center justify-center min-w-67.5",
-                  plan.highlighted ? "border-2 border-primary" : ""
-                )}
-              >
-                <CardHeader className="w-full">
-                  <CardTitle className="text-xl">{plan.name}</CardTitle>
-                  <p className="text-3xl font-bold">{plan.price}</p>
-                  <CardDescription>{plan.description}</CardDescription>
-                </CardHeader>
-
-                <CardContent className="w-full flex flex-col gap-y-4">
-                  <p className="text-sm text-gray-700">Features:</p>
-
-                  <div className="flex flex-col gap-y-2">
-                    {plan.features
-                      .map((item) => {
-                        return (
-                          <div key={item} className="flex gap-x-2 items-center">
-                            <CheckIcon className="text-primary" size={18} />
-                            <p key={item} className="text-sm">
-                              {item}
-                            </p>
-                          </div>
-                        );
-                      })}
-                  </div>
-
-                  <Button
-                    variant={plan.highlighted ? "default" : "outline"}
-                    size={"lg"}
-                  >
-                    {plan.buttonText}
-                  </Button>
-                </CardContent>
-              </Card>
-            );
-          })}
-        </div>
-      </section>
-    </MaxWidthWrapper>
+    <ErrorBoundary FallbackComponent={ErrorFallback}>
+      <Suspense
+        fallback={
+          <div className="flex w-full justify-center mt-8">
+            <Loading size={40} />
+          </div>
+        }
+      >
+        <PricingPageClient user={session?.user} />
+      </Suspense>
+    </ErrorBoundary>
   );
 };
 
