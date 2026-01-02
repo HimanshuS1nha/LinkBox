@@ -19,7 +19,7 @@ const DashboardNavbar = () => {
     <nav className="flex justify-between items-center py-3">
       <Link href={"/"}>
         <p className="font-medium text-xl">
-          Link<span className="text-primary font-bold">Tree</span>
+          Link<span className="text-primary font-bold">Box</span>
         </p>
       </Link>
 

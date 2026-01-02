@@ -4,17 +4,12 @@ import Link from "next/link";
 import {
   ClockIcon,
   GlobeIcon,
-  LinkIcon,
   MousePointerIcon,
   TrendingUpIcon,
-  FacebookIcon,
-  InstagramIcon,
   ChartLineIcon,
   EyeIcon,
   ChromiumIcon,
   Grid2X2Icon,
-  LinkedinIcon,
-  TwitterIcon,
 } from "lucide-react";
 import { formatDistanceToNowStrict } from "date-fns";
 
@@ -27,6 +22,7 @@ import {
 } from "@/components/ui/card";
 import { BarChart } from "./bar-chart";
 import DistributionChart from "./distribution-chart";
+import LinkIcon from "@/components/link-icon";
 
 import { trpc } from "@/trpc/client";
 
@@ -152,29 +148,7 @@ const AnalyticsPageClient = ({ userId }: { userId: string }) => {
                         <CardContent className="flex justify-between items-center">
                           <div className="flex gap-x-6 items-center">
                             <div className="p-1.5 rounded-lg bg-white shadow-sm shadow-white">
-                              {link.icon === "instagram" ? (
-                                <InstagramIcon
-                                  className="text-rose-600"
-                                  size={30}
-                                />
-                              ) : link.icon === "facebook" ? (
-                                <FacebookIcon
-                                  className="text-indigo-600"
-                                  size={30}
-                                />
-                              ) : link.icon === "other" ? (
-                                <LinkIcon size={24} className="text-primary" />
-                              ) : link.icon === "linkedin" ? (
-                                <LinkedinIcon
-                                  className="text-indigo-800"
-                                  size={30}
-                                />
-                              ) : (
-                                <TwitterIcon
-                                  className="text-indigo-800"
-                                  size={30}
-                                />
-                              )}
+                              <LinkIcon icon={link.icon} />
                             </div>
 
                             <p className="font-medium text-lg">{link.title}</p>

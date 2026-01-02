@@ -49,11 +49,11 @@ const TestimonialsSection = () => {
                   </div>
 
                   <div className="flex justify-center gap-x-2">
-                    <StarIcon className="fill-primary" />
-                    <StarIcon className="fill-primary" />
-                    <StarIcon className="fill-primary" />
-                    <StarIcon className="fill-primary" />
-                    <StarIcon className="fill-primary" />
+                    <p className="text-primary text-3xl">&#9733;</p>
+                    <p className="text-primary text-3xl">&#9733;</p>
+                    <p className="text-primary text-3xl">&#9733;</p>
+                    <p className="text-primary text-3xl">&#9733;</p>
+                    <p className="text-primary text-3xl">&#9733;</p>
                   </div>
                 </CardContent>
               </Card>

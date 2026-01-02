@@ -33,7 +33,7 @@ const Footer = () => {
         <div className="flex justify-center lg:justify-between flex-wrap gap-8 lg:gap-0">
           <div className="flex flex-col gap-y-5 w-[30%] min-w-50 items-center md:items-start">
             <h2 className="text-xl font-medium">
-              Link<span className="text-primary">Tree</span>
+              Link<span className="text-primary">Box</span>
             </h2>
             <p className="text-sm text-center md:text-left">
               Lorem ipsum dolor sit amet consectetur adipisicing elit. Qui eius
