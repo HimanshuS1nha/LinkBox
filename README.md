@@ -2,6 +2,28 @@
 
 LinkBox is a versatile link management tool that lets users create a customizable link page, while offering detailed click and profile visit analytics to track engagement. Perfect for optimizing your online presence.
 
+## Get started
+
+1. Setup environment variables according to .env.example file
+
+2. Install dependencies
+
+   ```bash
+   npm install
+   ```
+
+3. Sync tables data to database
+
+   ```bash
+   npm run db:push
+   ```
+
+4. Start the server
+
+   ```bash
+    npm run dev
+   ```
+
 ## Features
 
 - Full analytics for profile visits and clicks (no third party library used)
