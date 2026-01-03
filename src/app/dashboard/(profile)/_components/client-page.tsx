@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 import {
   Card,
@@ -45,6 +46,8 @@ const DashboardPageClient = ({
     description?: string | null;
   };
 }) => {
+  const router = useRouter();
+
   const [{ links }] = trpc.link.getLinksByUserId.useSuspenseQuery({
     userId: user.id,
   });
@@ -52,6 +55,7 @@ const DashboardPageClient = ({
   const { mutate: handleCreateOrUpdateLink, isPending } =
     trpc.link.createOrUpdateLinks.useMutation({
       onSuccess: (data) => {
+        router.refresh();
         toast.success(data.message);
       },
       onError: (error) => {
@@ -98,7 +102,7 @@ const DashboardPageClient = ({
   };
   return (
     <main className="flex flex-col 2xl:flex-row justify-between mt-8">
-      <ScrollArea className="w-full 2xl:w-[55%]">
+      <ScrollArea className="w-full 2xl:w-[53%]">
         <Card className="w-full">
           <CardHeader>
             <CardTitle className="text-3xl">My Links</CardTitle>
@@ -215,7 +219,7 @@ const DashboardPageClient = ({
         </Card>
       </ScrollArea>
 
-      <ScrollArea className="w-full 2xl:w-[44%]">
+      <ScrollArea className="w-full 2xl:w-[46%]">
         <Card className="w-full">
           <CardHeader>
             <CardTitle className="text-3xl">Preview</CardTitle>
