@@ -34,7 +34,7 @@ LinkBox is a versatile link management tool that lets users create a customizabl
 
 ![Dashboard-Profile-Loading](https://github.com/user-attachments/assets/b37fc440-fda3-4bd3-b364-3826eb4feba8)
 ---
-![Dashboard-Profile](https://github.com/user-attachments/assets/ecd7e080-b5b1-4953-90bc-e67d0643895c)
+![Dashboard-Profile](https://github.com/user-attachments/assets/da78f0db-deba-403f-a3fa-c8628fbd966f)
 
 - Dashboard Analytics page
 
