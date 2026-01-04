@@ -82,6 +82,7 @@ LinkBox is a versatile link management tool that lets users create a customizabl
 
 - Full analytics for profile visits and clicks (no third party library used)
 - Google OAuth
+- Drag and drop to reorder links
 - Stripe for payments
 - Beautiful loading skeletons
 - Levering React Server Components to prefetch data using tRPC
