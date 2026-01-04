@@ -13,6 +13,12 @@ import {
 import Link from "next/link";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import { DndContext, type DragEndEvent, closestCenter } from "@dnd-kit/core";
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+  arrayMove,
+} from "@dnd-kit/sortable";
 
 import {
   Card,
@@ -100,6 +106,19 @@ const DashboardPageClient = ({
       return newLinks;
     });
   };
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (over && active.id !== over.id) {
+      setUpdatedLinks((prev) => {
+        const oldIndex = prev.findIndex((i) => i.title === active.id);
+        const newIndex = prev.findIndex((i) => i.title === over.id);
+
+        return arrayMove(prev, oldIndex, newIndex);
+      });
+    }
+  };
   return (
     <main className="flex flex-col 2xl:flex-row justify-between mt-8">
       <ScrollArea className="w-full 2xl:w-[53%]">
@@ -183,18 +202,29 @@ const DashboardPageClient = ({
                 </Button>
               </div>
 
-              {updatedLinks.map((link, i) => {
-                return (
-                  <LinkCard
-                    link={link}
-                    i={i}
-                    handleUpdateIcon={handleUpdateIcon}
-                    updatedLinks={updatedLinks}
-                    setUpdatedLinks={setUpdatedLinks}
-                    key={link.id ?? i}
-                  />
-                );
-              })}
+              <DndContext
+                collisionDetection={closestCenter}
+                onDragEnd={handleDragEnd}
+              >
+                <SortableContext
+                  items={updatedLinks.map((i) => i.title)}
+                  strategy={verticalListSortingStrategy}
+                >
+                  {updatedLinks.map((link, i) => {
+                    return (
+                      <LinkCard
+                        link={link}
+                        i={i}
+                        handleUpdateIcon={handleUpdateIcon}
+                        updatedLinks={updatedLinks}
+                        setUpdatedLinks={setUpdatedLinks}
+                        key={link.id ?? i}
+                        isPending={isPending}
+                      />
+                    );
+                  })}
+                </SortableContext>
+              </DndContext>
             </div>
 
             <Separator />

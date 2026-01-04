@@ -12,6 +12,8 @@ import {
   LinkedinIcon,
   XIcon,
 } from "lucide-react";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -27,6 +29,7 @@ const LinkCard = ({
   setUpdatedLinks,
   i,
   handleUpdateIcon,
+  isPending,
 }: {
   link: LinkType;
   updatedLinks: LinkType[];
@@ -36,11 +39,29 @@ const LinkCard = ({
     i: number,
     type: "instagram" | "linkedin" | "other" | "facebook" | "twitter"
   ) => void;
+  isPending: boolean;
 }) => {
   const [isEditing, setIsEditing] = useState(false);
+
+  const { attributes, listeners, setNodeRef, transform, transition } =
+    useSortable({ id: link.title });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
   return (
-    <Card className="flex flex-row gap-x-0 py-0 h-46.5" key={link.id ?? i}>
-      <div className="w-[15%] h-[186] flex justify-center items-center border-r border-r-gray-300 cursor-grab active:cursor-grabbing">
+    <Card
+      className="flex flex-row gap-x-0 py-0 h-46.5"
+      key={link.id ?? i}
+      style={style}
+      ref={setNodeRef}
+    >
+      <div
+        className="w-[15%] h-[186] flex justify-center items-center border-r border-r-gray-300 cursor-grab active:cursor-grabbing"
+        {...listeners}
+        {...attributes}
+      >
         <MoveIcon size={20} />
       </div>
 
@@ -148,7 +169,7 @@ const LinkCard = ({
                 return newLinks;
               });
             }}
-            disabled={updatedLinks.length <= 1}
+            disabled={updatedLinks.length <= 1 || isPending}
           >
             <XIcon
               className="group-hover:text-white delay-100 transition-all text-destructive"
